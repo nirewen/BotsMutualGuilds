@@ -142,18 +142,17 @@ class BotsMutualGuilds {
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
           .forEach((guild) => {
             const icon = this.getIcon(guild);
-
-            guilds.append(
-              $(`
-                <div class="guild">
-                  <div class="avatar-large">${icon}</div>
-                  <div class="guild-inner">
-                    <div class="guild-name">${guild.name}</div>
-                    <div class="guild-nick">${this.getUser(guild, user).nick || ''}</div>
-                  </div>
+            const guildEl = $(`
+              <div class="guild">
+                <div class="avatar-large">${icon}</div>
+                <div class="guild-inner">
+                  <div class="guild-name">${guild.name}</div>
+                  <div class="guild-nick">${this.getUser(guild, user).nick || ''}</div>
                 </div>
-              ` ).click(() => this.switchToGuild(guild.id))
-            );
+              </div>
+            `);
+            guildEl.click(() => this.switchToGuild(guild.id));
+            guilds.append(guildEl);
           });
       });
 

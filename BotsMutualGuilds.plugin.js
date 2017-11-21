@@ -169,6 +169,5 @@ class BotsMutualGuilds {
 
         guilds.append(oldGuilds);
       });
-    }
   }
 }

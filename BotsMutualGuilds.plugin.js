@@ -80,12 +80,12 @@ class BotsMutualGuilds {
     return this.MembersStore.getMembers(guild.id).find(u => u.userId == id);
   }
 
-  getIcon (guild) {
+  getIconTemplate (guild) {
     if (guild.icon) {
-      return `style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)">`;
+      return `<div class="avatar-large" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`;
     }
 
-    return `style="font-size: 16px;">${guild.acronym}`;
+    return `<div class="avatar-large" style="font-size: 16px;">${guild.acronym}</div>`;
   }
 
   invalid (e) {
@@ -141,16 +141,13 @@ class BotsMutualGuilds {
           .filter(guild => this.getUser(guild, user))
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
           .forEach((guild) => {
-            const icon = this.getIcon(guild);
-            const guildTemplate = `
-              <div class="guild">
-                <div class="avatar-large">${icon}</div>
+            const iconTemplate = this.getIconTemplate(guild);
+            const guildTemplate = `<div class="guild">${iconTemplate}
                 <div class="guild-inner">
                   <div class="guild-name">${guild.name}</div>
                   <div class="guild-nick">${this.getUser(guild, user).nick || ''}</div>
                 </div>
-              </div>
-            `;
+              </div>`;
             guilds.append($(guildTemplate).click(() => this.switchToGuild(guild.id)));
           });
       });

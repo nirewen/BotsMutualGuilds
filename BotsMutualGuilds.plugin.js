@@ -142,7 +142,7 @@ class BotsMutualGuilds {
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
           .forEach((guild) => {
             const icon = this.getIcon(guild);
-            const guildEl = $(`
+            const guildTemplate = `
               <div class="guild">
                 <div class="avatar-large">${icon}</div>
                 <div class="guild-inner">
@@ -150,9 +150,8 @@ class BotsMutualGuilds {
                   <div class="guild-nick">${this.getUser(guild, user).nick || ''}</div>
                 </div>
               </div>
-            `);
-            guildEl.click(() => this.switchToGuild(guild.id));
-            guilds.append(guildEl);
+            `;
+            guilds.append($(guildTemplate).click(() => this.switchToGuild(guild.id)));
           });
       });
 

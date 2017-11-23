@@ -16,7 +16,7 @@ class BotsMutualGuilds {
   }
 
   getVersion() {
-    return '1.0.0';
+    return '1.0.1';
   }
 
   getAuthor() {
@@ -71,7 +71,7 @@ class BotsMutualGuilds {
     if (document.querySelector('.backdrop-2ohBEd'))
       $('.backdrop-2ohBEd').click();
     else
-	  $('.callout-backdrop').click();
+      $('.callout-backdrop').click();
   }
 
   getUser(guild, id) {
@@ -79,9 +79,9 @@ class BotsMutualGuilds {
   }
 
   getIconTemplate(guild) {
-	return guild.icon
-	  ? `<div class="avatar-large" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
-	  : `<div class="avatar-large" style="font-size: 16px;">${guild.acronym}</div>`;
+    return guild.icon
+      ? `<div class="avatar-large" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
+      : `<div class="avatar-large" style="font-size: 16px;">${guild.acronym}</div>`;
   }
 
   observer(e) {

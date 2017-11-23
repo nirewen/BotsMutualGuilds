@@ -1,26 +1,8 @@
 //META{"name":"BotsMutualGuilds"}*//
 
+/* global $, Element, PluginUtilities, ReactUtilities */
+
 class BotsMutualGuilds {
-  start() {
-    const oldInstance = document.getElementById('zeresLibraryScript');
-
-    if (oldInstance) {
-      oldInstance.parentElement.removeChild(oldInstance);
-    }
-
-    const newInstance = document.createElement('script');
-    newInstance.setAttribute('type', 'text/javascript');
-    newInstance.setAttribute('src', 'https://rauenzi.github.io/BetterDiscordAddons/Plugins/PluginLibrary.js');
-    newInstance.setAttribute('id', 'zeresLibraryScript');
-    document.head.appendChild(newInstance);
-
-    if (typeof window.ZeresLibrary !== 'undefined') {
-      this.initialize();
-    } else {
-      newInstance.addEventListener('load', () => this.initialize());
-    }
-  }
-
   getName() {
     return 'Bots Mutual Guilds';
   }
@@ -34,17 +16,13 @@ class BotsMutualGuilds {
   }
 
   getVersion() {
-    return '1.0.0';
+    return '1.0.1';
   }
 
   getAuthor() {
     return 'Nirewen';
   }
-
-  stop() {
-    this.initialized = false;
-  }
-
+  
   load() {
   	//
   }
@@ -53,13 +31,34 @@ class BotsMutualGuilds {
   	//
   }
 
+  start() {
+    const oldInstance = document.getElementById('zeresLibraryScript');
+
+    if (oldInstance)
+      oldInstance.parentElement.removeChild(oldInstance);
+
+    const newInstance = document.createElement('script');
+    newInstance.setAttribute('type', 'text/javascript');
+    newInstance.setAttribute('src', 'https://rauenzi.github.io/BetterDiscordAddons/Plugins/PluginLibrary.js');
+    newInstance.setAttribute('id', 'zeresLibraryScript');
+    document.head.appendChild(newInstance);
+
+    if (typeof window.ZeresLibrary !== 'undefined')
+      this.initialize();
+    else
+      newInstance.addEventListener('load', () => this.initialize());
+  }
+  
+  stop() {
+    this.initialized = false;
+  }
+
   initialize() {
+	PluginUtilities.checkForUpdate(this.getName(), this.getVersion(), `https://raw.githubusercontent.com/nirewen/${this.getName()}/master/${this.getName()}.plugin.js`);
     PluginUtilities.showToast(`${this.getShortName()} ${this.getVersion()} has started.`);
 
     this.initialized = true;
-    this.MembersStore = PluginUtilities.WebpackModules.findByUniqueProperties([
-      'getNick',
-    ]);
+    this.MembersStore = PluginUtilities.WebpackModules.findByUniqueProperties(['getNick']);
   }
 
   switchToGuild(id) {
@@ -69,40 +68,30 @@ class BotsMutualGuilds {
       .find('a')[0]
       .click();
 
-    if (document.querySelector('.backdrop-2ohBEd')) {
+    if (document.querySelector('.backdrop-2ohBEd'))
       $('.backdrop-2ohBEd').click();
-    } else {
-    	 $('.callout-backdrop').click();
-    }
+    else
+	  $('.callout-backdrop').click();
   }
 
   getUser(guild, id) {
     return this.MembersStore.getMembers(guild.id).find(u => u.userId == id);
   }
 
-  getIconTemplate (guild) {
-    if (guild.icon) {
-      return `<div class="avatar-large" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`;
-    }
-
-    return `<div class="avatar-large" style="font-size: 16px;">${guild.acronym}</div>`;
-  }
-
-  invalid (e) {
-  	return ! e.addedNodes.length || ! (e.addedNodes[0] instanceof Element) || ! this.initialized;
+  getIconTemplate(guild) {
+	return guild.icon
+	  ? `<div class="avatar-large" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
+	  : `<div class="avatar-large" style="font-size: 16px;">${guild.acronym}</div>`;
   }
 
   observer(e) {
-    if (this.invalid(e)) {
+    if (!e.addedNodes.length || !(e.addedNodes[0] instanceof Element) || !this.initialized)
       return;
-    }
 
     const elem = e.addedNodes[0];
-
-    // GAMBIARRA
-    if (! (elem.querySelector('.botTag-1OwMgs') || elem.querySelector('.bot-tag')) || ! this.initialized) {
+	
+    if (!(elem.querySelector('.botTag-1OwMgs') || elem.querySelector('.bot-tag')) || !this.initialized)
     	return;
-    }
 
     let oldGuilds;
 
@@ -115,10 +104,10 @@ class BotsMutualGuilds {
       .find('.tab-bar-item');
 
     const guilds = $('#user-profile-modal')
-    	.find('.guilds')
+	  .find('.guilds');
 
     tabs.eq(1)
-      .on('click', (e) => {
+      .on('click.bmg', (e) => {
         e.stopPropagation();
 
         const user = $('#user-profile-modal')
@@ -126,11 +115,7 @@ class BotsMutualGuilds {
           .css('background-image')
           .split('/')[4];
 
-        tabs.eq(0)
-          .toggleClass('selected');
-
-        tabs.eq(1)
-          .toggleClass('selected');
+        tabs.toggleClass('selected');
 
         oldGuilds = guilds.children();
 
@@ -141,24 +126,21 @@ class BotsMutualGuilds {
           .filter(guild => this.getUser(guild, user))
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
           .forEach((guild) => {
-            const iconTemplate = this.getIconTemplate(guild);
-            const guildTemplate = `<div class="guild">${iconTemplate}
-                <div class="guild-inner">
-                  <div class="guild-name">${guild.name}</div>
-                  <div class="guild-nick">${this.getUser(guild, user).nick || ''}</div>
-                </div>
-              </div>`;
-            guilds.append($(guildTemplate).click(() => this.switchToGuild(guild.id)));
+            guilds.append(
+              $(`<div class="guild">
+                  ${this.getIconTemplate(guild)}
+                  <div class="guild-inner">
+                    <div class="guild-name">${guild.name}</div>
+                    <div class="guild-nick">${this.getUser(guild, user).nick || ''}</div>
+                  </div>
+                </div>`).click(() => this.switchToGuild(guild.id))
+            );
           });
       });
 
     tabs.eq(0)
-      .on('click', () => {
-      	tabs.eq(1)
-          .toggleClass('selected');
-
-        tabs.eq(0)
-          .toggleClass('selected');
+      .on('click.bmg', () => {
+        tabs.toggleClass('selected');
 
         guilds.empty();
 

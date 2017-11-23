@@ -16,7 +16,7 @@ class BotsMutualGuilds {
   }
 
   getVersion() {
-    return '1.0.1';
+    return '1.0.0';
   }
 
   getAuthor() {
@@ -54,7 +54,7 @@ class BotsMutualGuilds {
   }
 
   initialize() {
-	PluginUtilities.checkForUpdate(this.getName(), this.getVersion(), `https://raw.githubusercontent.com/nirewen/${this.getName()}/master/${this.getName()}.plugin.js`);
+    PluginUtilities.checkForUpdate(this.getName(), this.getVersion(), `https://raw.githubusercontent.com/nirewen/BotsMutualGuilds/master/BotsMutualGuilds.plugin.js`);
     PluginUtilities.showToast(`${this.getShortName()} ${this.getVersion()} has started.`);
 
     this.initialized = true;

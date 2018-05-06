@@ -16,7 +16,7 @@ class BotsMutualGuilds {
   }
 
   getVersion() {
-    return '1.0.3';
+    return '1.0.4';
   }
 
   getAuthor() {
@@ -80,8 +80,8 @@ class BotsMutualGuilds {
 
   getIconTemplate(guild) {
     return guild.icon
-      ? `<div class="avatar-large listAvatar-MpHQ5z" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
-      : `<div class="avatar-large listAvatar-MpHQ5z" style="font-size: 16px;">${guild.acronym}</div>`;
+      ? `<div class="avatar-large listAvatar-1NlAhb" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
+      : `<div class="avatar-large listAvatar-1NlAhb" style="font-size: 16px;">${guild.acronym}</div>`;
   }
 
   observer(e) {
@@ -90,27 +90,24 @@ class BotsMutualGuilds {
 
     const elem = e.addedNodes[0];
     
-    if (!elem.querySelector('.botTag-1OwMgs') || !this.initialized)
+    if (!elem.querySelector('.botTag-2WPJ74') || !this.initialized)
         return;
 
     let oldGuilds;
     
-    $('div[class*="topSection"').children('div').first().append(`<div class="tabBarContainer-3RVZc-"><div class="tab-bar tabBar-2z50ux TOP"><div class="tab-bar-item tabBarItem-1Lg555 selected">${this.locale.infos}</div><div class="tab-bar-item tabBarItem-1Lg555">${this.locale.guild}</div></div></div>`);
+    $('div[class*="topSection"').children('div').first().append(`<div class="tabBarContainer-1s1u-z"><div class="tab-bar tabBar-2MuP6- TOP"><div class="tab-bar-item tabBarItem-1b8RUP selected">${this.locale.infos}</div><div class="tab-bar-item tabBarItem-1b8RUP">${this.locale.guild}</div></div></div>`);
 
-    const tabs = $('.inner-1_1f7b')
+    const tabs = $('.inner-1JeGVc')
       .find('.tab-bar-item');
 
-    const guilds = $('.inner-1_1f7b')
-      .find('.scrollerWrap-2uBjct');
+    const guilds = $('.inner-1JeGVc')
+      .find('.scrollerWrap-2lJEkd');
 
     tabs.eq(1)
       .on('click.bmg', (e) => {
         e.stopPropagation();
 
-        const user = $('.inner-1_1f7b')
-          .find('.avatar-1BXaQj .image-EVRGPw')
-          .css('background-image')
-          .split('/')[4];
+        const {user} = ReactUtilities.getOwnerInstance($('.header-QKLPzZ .image-33JSyf')).props;
 
         tabs.toggleClass('selected');
 
@@ -118,19 +115,19 @@ class BotsMutualGuilds {
 
         oldGuilds.parent().empty();
         
-        guilds.append('<div class="scroller-fzNley listScroller-1M3aYe">');
+        guilds.append('<div class="scroller-2FKFPG listScroller-2_vlfo">');
 
         ReactUtilities.getOwnerInstance($('.guilds-wrapper')[0])
           .state.guilds.map(o => o.guild)
-          .filter(guild => this.getUser(guild, user))
+          .filter(guild => this.getUser(guild, user.id))
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
           .forEach((guild) => {
-            guilds.find('.scroller-fzNley').append(
-              $(`<div class="listRow-1wEi-U flex-3B1Tl4 weightMedium-13x9Y8">
+            guilds.find('.scroller-2FKFPG').append(
+              $(`<div class="listRow-hutiT_ flex-1O1GKY weightMedium-2iZe9B">
                   ${this.getIconTemplate(guild)}
-                  <div class="listRowContent-3pOfag">
-                    <div class="listName-1Xr1Jk size16-3IvaX_ height16-1qXrGy">${guild.name}</div>
-                    <div class="guildNick-1oZKE3 weightNormal-3gw0Lm">${this.getUser(guild, user).nick || ''}</div>
+                  <div class="listRowContent-3Kih4Q">
+                    <div class="listName-3w10cx size16-14cGz5 height16-2Lv3qA">${guild.name}</div>
+                    <div class="guildNick-3uAm3i weightNormal-WI4TcG">${this.getUser(guild, user.id).nick || ''}</div>
                   </div>
                 </div>`).click(() => this.switchToGuild(guild.id))
             );
@@ -150,6 +147,10 @@ class BotsMutualGuilds {
   get locale() {
     switch (document.documentElement.getAttribute('lang').split('-')[0]) {
       case 'en': // English
+        return {
+          'infos': 'User Info',
+          'guild': 'Mutual Servers',
+        };
       case 'da': // Dansk
         return {
           'infos': 'User Info',

@@ -16,7 +16,7 @@ class BotsMutualGuilds {
   }
 
   getVersion() {
-    return '1.0.4';
+    return '1.0.5';
   }
 
   getAuthor() {
@@ -68,10 +68,7 @@ class BotsMutualGuilds {
       .find('a')[0]
       .click();
 
-    if (document.querySelector('.backdrop-2ohBEd'))
-      $('.backdrop-2ohBEd').click();
-    else
-      $('.callout-backdrop').click();
+    $('.backdrop-1ocfXc').click();
   }
 
   getUser(guild, id) {

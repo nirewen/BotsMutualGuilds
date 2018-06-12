@@ -87,7 +87,7 @@ class BotsMutualGuilds {
 
     const elem = e.addedNodes[0];
     
-    if (!elem.querySelector('.botTag-2WPJ74') || !this.initialized)
+    if (!elem.querySelector('.inner-1JeGVc .botTag-2WPJ74') || !this.initialized)
         return;
 
     let oldGuilds;

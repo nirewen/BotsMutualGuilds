@@ -16,7 +16,7 @@ class BotsMutualGuilds {
   }
 
   getVersion() {
-    return '1.0.6';
+    return '1.0.7';
   }
 
   getAuthor() {
@@ -62,13 +62,13 @@ class BotsMutualGuilds {
   }
 
   switchToGuild(id) {
-    $('.guilds-wrapper')
-      .find('.guild-inner')
+    $('.da-guildsWrapper')
+      .find('.da-guildInner')
       .filter((i, guild) => $(guild).html().includes(id))
       .find('a')[0]
       .click();
 
-    $('.backdrop-1ocfXc').click();
+    $('.da-backdrop').click();
   }
 
   getUser(guild, id) {
@@ -104,7 +104,7 @@ class BotsMutualGuilds {
       .on('click.bmg', (e) => {
         e.stopPropagation();
 
-        const {user} = ReactUtilities.getOwnerInstance($('.header-QKLPzZ .image-33JSyf')).props;
+        const {user} = ReactUtilities.getOwnerInstance($('.da-userSelectText')).props;
 
         tabs.toggleClass('selected');
 
@@ -114,8 +114,8 @@ class BotsMutualGuilds {
         
         guilds.append('<div class="scroller-2FKFPG listScroller-2_vlfo">');
 
-        ReactUtilities.getOwnerInstance($('.guilds-wrapper')[0])
-          .state.guilds.map(o => o.guild)
+        ReactUtilities.getOwnerInstance($('.da-guildsWrapper')[0])
+          .props.guilds.map(o => o.guild)
           .filter(guild => this.getUser(guild, user.id))
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
           .forEach((guild) => {

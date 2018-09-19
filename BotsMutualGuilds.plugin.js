@@ -123,8 +123,8 @@ class BotsMutualGuilds {
               $(`<div class="listRow-hutiT_ flex-1O1GKY weightMedium-2iZe9B">
                   ${this.getIconTemplate(guild)}
                   <div class="listRowContent-3Kih4Q">
-                    <div class="listName-3w10cx size16-14cGz5 height16-2Lv3qA">${guild.name}</div>
-                    <div class="guildNick-3uAm3i weightNormal-WI4TcG">${this.getUser(guild, user.id).nick || ''}</div>
+                    ${$('<div class="listName-3w10cx size16-14cGz5 height16-2Lv3qA">').text(guild.name).html()}
+                    ${$('<div class="guildNick-3uAm3i weightNormal-WI4TcG">').text(this.getUser(guild, user.id).nick || '').html()}
                   </div>
                 </div>`).click(() => this.switchToGuild(guild.id))
             );

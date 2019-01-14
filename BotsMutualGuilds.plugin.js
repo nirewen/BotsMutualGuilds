@@ -1,27 +1,20 @@
 //META{"name":"BotsMutualGuilds"}*//
 
-/* global $, Element, PluginUtilities, ReactUtilities */
+var BotsMutualGuilds = (() => {
+    const config = {"info":{"name":"BotsMutualGuilds","authors":[{"name":"Nirewen","discord_id":"106915215592923136","github_username":"nirewen"}],"version":"1.1.0","description":"Brings back mutual servers to bot accounts","github":"https://github.com/nirewen/BotsMutualGuilds","github_raw":"https://raw.githubusercontent.com/nirewen/BotsMutualGuilds/master/BotsMutualGuilds.plugin.js"},"main":"index.js"};
 
-class BotsMutualGuilds {
-  getName() {
-    return 'Bots Mutual Guilds';
-  }
-
-  getShortName() {
-    return 'BMG';
-  }
-
-  getDescription() {
-    return 'Brings back mutual servers to bot accounts';
-  }
-
-  getVersion() {
-    return '1.0.9';
-  }
-
-  getAuthor() {
-    return 'Nirewen';
-  }
+    return !global.ZeresPluginLibrary ? class {
+        getName() {return config.info.name;}
+        getAuthor() {return config.info.authors.map(a => a.name).join(", ");}
+        getDescription() {return config.info.description;}
+        getVersion() {return config.info.version;}
+        load() {window.BdApi.alert("Library Missing",`The library plugin needed for ${config.info.name} is missing.<br /><br /> <a href="https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js" target="_blank">Click here to download the library!</a>`);}
+        start() {}
+        stop() {}
+    } : (([Plugin, Api]) => {
+        const plugin = (Plugin, Api) => {
+    const {DiscordSelectors, WebpackModules, PluginUpdater, PluginUtilities, ReactTools, Toasts} = Api;
+    return class BotsMutualGuilds extends Plugin {
   
   load() {
     //
@@ -32,43 +25,25 @@ class BotsMutualGuilds {
   }
 
   start() {
-    const oldInstance = document.getElementById('zeresLibraryScript');
+    Toasts.show(`${this.getName()} ${this.getVersion()} has started.`);
+    PluginUpdater.checkForUpdate(this.getName(), this.getVersion(), config.info.github_raw);
 
-    if (oldInstance)
-      oldInstance.parentElement.removeChild(oldInstance);
-
-    const newInstance = document.createElement('script');
-    newInstance.setAttribute('type', 'text/javascript');
-    newInstance.setAttribute('src', 'https://rauenzi.github.io/BetterDiscordAddons/Plugins/PluginLibrary.js');
-    newInstance.setAttribute('id', 'zeresLibraryScript');
-    document.head.appendChild(newInstance);
-
-    if (typeof window.ZeresLibrary !== 'undefined')
-      this.initialize();
-    else
-      newInstance.addEventListener('load', () => this.initialize());
+    this.initialized = true;
+    this.MembersStore = WebpackModules.findByUniqueProperties(['getNick']);
   }
   
   stop() {
     this.initialized = false;
   }
 
-  initialize() {
-    PluginUtilities.checkForUpdate(this.getName(), this.getVersion(), `https://raw.githubusercontent.com/nirewen/BotsMutualGuilds/master/BotsMutualGuilds.plugin.js`);
-    PluginUtilities.showToast(`${this.getShortName()} ${this.getVersion()} has started.`);
-
-    this.initialized = true;
-    this.MembersStore = PluginUtilities.WebpackModules.findByUniqueProperties(['getNick']);
-  }
-
   switchToGuild(id) {
-    $('.da-guildsWrapper')
-      .find('.da-guildInner')
+    $(DiscordSelectors.Guilds.guildsWrapper.value)
+      .find(DiscordSelectors.Guilds.guildInner.value)
       .filter((i, guild) => $(guild).html().includes(id))
       .find('a')[0]
       .click();
 
-    $('.da-backdrop').click();
+    $(DiscordSelectors.Backdrop.backdrop.value).click();
   }
 
   getUser(guild, id) {
@@ -77,8 +52,8 @@ class BotsMutualGuilds {
 
   getIconTemplate(guild) {
     return guild.icon
-      ? `<div class="avatar-large listAvatar-1NlAhb" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
-      : `<div class="avatar-large listAvatar-1NlAhb" style="font-size: 16px;">${guild.acronym}</div>`;
+      ? `<div class="avatar-large icon-3o6xvg listAvatar-1NlAhb iconSizeMedium-2OqPjI iconInactive-98JN5i" style="background-image: url(https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp)"></div>`
+      : `<div class="avatar-large icon-3o6xvg listAvatar-1NlAhb guildAvatarWithoutIcon-1sTmE_ iconSizeMedium-2OqPjI iconInactive-98JN5i noIcon-1a_FrS" style="font-size: 8px;">${guild.acronym}</div>`;
   }
 
   observer(e) {
@@ -87,34 +62,45 @@ class BotsMutualGuilds {
 
     const elem = e.addedNodes[0];
     
-    if (!elem.querySelector('.inner-1JeGVc .botTag-2WPJ74') || !this.initialized)
+    if (!elem.querySelector('.inner-1JeGVc .botTag-2WPJ74:not(.owner-tag)') || !this.initialized)
         return;
 
     let oldGuilds;
     
-    $('div[class*="topSection"').children('div').first().append(`<div class="tabBarContainer-1s1u-z"><div class="tab-bar tabBar-2MuP6- TOP"><div class="tab-bar-item tabBarItem-1b8RUP selected">${this.locale.infos}</div><div class="tab-bar-item tabBarItem-1b8RUP">${this.locale.guild}</div></div></div>`);
+    $('div[class*="topSection"').children('div').first().append(`<div class="tabBarContainer-1s1u-z"><div class="tabBar-2MuP6- top-28JiJ-"><div class="itemSelected-1qLhcL item-PXvHYJ selected-3s45Ha tabBarItem-1b8RUP" style="border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);">${this.locale.infos}</div><div class="itemDefault-3Jdr52 item-PXvHYJ notSelected-1N1G5p tabBarItem-1b8RUP" style="border-color: transparent; color: rgba(255, 255, 255, 0.4);">${this.locale.guild}</div></div></div>`);
 
     const tabs = $('.inner-1JeGVc')
-      .find('.tab-bar-item');
+      .find('.tabBarItem-1b8RUP');
 
     const guilds = $('.inner-1JeGVc')
       .find('.scrollerWrap-2lJEkd');
 
+    tabs
+      .on('mouseenter.bmg', (e) => {
+		if (!$(e.currentTarget).hasClass('selected-3s45Ha')) $(e.currentTarget).css('border-color', 'rgba(255, 255, 255, 0.6)').css('color', 'rgba(255, 255, 255, 0.6)');
+	  });
+    tabs
+      .on('mouseleave.bmg', (e) => {
+		if (!$(e.currentTarget).hasClass('selected-3s45Ha')) $(e.currentTarget).css('border-color', 'transparent').css('color', 'rgba(255, 255, 255 ,0.4)');
+	  });
     tabs.eq(1)
       .on('click.bmg', (e) => {
         e.stopPropagation();
 
-        const {user} = ReactUtilities.getOwnerInstance($('.da-userSelectText')).props;
+        const {user} = ReactTools.getOwnerInstance($(DiscordSelectors.UserModal.userSelectText.value)[0]).props;
 
-        tabs.toggleClass('selected');
+        tabs.toggleClass('selected-3s45Ha').toggleClass('itemSelected-1qLhcL').toggleClass('notSelected-1N1G5p').toggleClass('itemDefault-3Jdr52');
+		
+		tabs.css('border-color', 'transparent').css('color', 'rgba(255, 255, 255 ,0.4)');
+		$(e.currentTarget).css('border-color', 'rgb(255, 255, 255)').css('color', 'rgb(255, 255, 255)');
 
         oldGuilds = guilds.children();
 
         oldGuilds.parent().empty();
         
         guilds.append('<div class="scroller-2FKFPG listScroller-2_vlfo">');
-
-        ReactUtilities.getOwnerInstance($('.da-guildsWrapper')[0])
+	
+        ReactTools.getOwnerInstance($(DiscordSelectors.Guilds.guildsWrapper.value)[0])
           .props.guilds.map(o => o.guild)
           .filter(guild => this.getUser(guild, user.id))
           .sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
@@ -133,7 +119,11 @@ class BotsMutualGuilds {
 
     tabs.eq(0)
       .on('click.bmg', () => {
-        tabs.toggleClass('selected');
+
+        tabs.toggleClass('selected-3s45Ha').toggleClass('itemSelected-1qLhcL').toggleClass('notSelected-1N1G5p').toggleClass('itemDefault-3Jdr52');
+		
+		tabs.css('border-color', 'transparent').css('color', 'rgba(255, 255, 255 ,0.4)');
+		$(e.currentTarget).css('border-color', 'rgb(255, 255, 255)').css('color', 'rgb(255, 255, 255)');
 
         guilds.empty();
 
@@ -251,3 +241,7 @@ class BotsMutualGuilds {
     }
   }
 }
+};
+        return plugin(Plugin, Api);
+    })(global.ZeresPluginLibrary.buildPlugin(config));
+})();

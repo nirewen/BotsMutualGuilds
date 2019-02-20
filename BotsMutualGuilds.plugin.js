@@ -1,7 +1,7 @@
 //META{"name":"BotsMutualGuilds"}*//
 
 var BotsMutualGuilds = (() => {
-    const config = {"info":{"name":"BotsMutualGuilds","authors":[{"name":"Nirewen","discord_id":"106915215592923136","github_username":"nirewen"}],"version":"1.1.0","description":"Brings back mutual servers to bot accounts","github":"https://github.com/nirewen/BotsMutualGuilds","github_raw":"https://raw.githubusercontent.com/nirewen/BotsMutualGuilds/master/BotsMutualGuilds.plugin.js"},"main":"index.js"};
+    const config = {"info":{"name":"BotsMutualGuilds","authors":[{"name":"Nirewen","discord_id":"106915215592923136","github_username":"nirewen"}],"version":"1.1.1","description":"Brings back mutual servers to bot accounts","github":"https://github.com/nirewen/BotsMutualGuilds","github_raw":"https://raw.githubusercontent.com/nirewen/BotsMutualGuilds/master/BotsMutualGuilds.plugin.js"},"main":"index.js"};
 
     return !global.ZeresPluginLibrary ? class {
         getName() {return config.info.name;}
@@ -62,8 +62,12 @@ var BotsMutualGuilds = (() => {
 
     const elem = e.addedNodes[0];
     
-    if (!elem.querySelector('.inner-1JeGVc .botTag-2WPJ74:not(.owner-tag)') || !this.initialized)
+    if (!elem.querySelector('.inner-1JeGVc .botTag-2WPJ74') || !this.initialized)
         return;
+
+    const {user} = ReactTools.getOwnerInstance($(DiscordSelectors.UserModal.userSelectText.value)[0]).props;
+	
+	if (!user || !user.bot) return;
 
     let oldGuilds;
     
@@ -86,8 +90,6 @@ var BotsMutualGuilds = (() => {
     tabs.eq(1)
       .on('click.bmg', (e) => {
         e.stopPropagation();
-
-        const {user} = ReactTools.getOwnerInstance($(DiscordSelectors.UserModal.userSelectText.value)[0]).props;
 
         tabs.toggleClass('selected-3s45Ha').toggleClass('itemSelected-1qLhcL').toggleClass('notSelected-1N1G5p').toggleClass('itemDefault-3Jdr52');
 		
@@ -118,7 +120,7 @@ var BotsMutualGuilds = (() => {
       });
 
     tabs.eq(0)
-      .on('click.bmg', () => {
+      .on('click.bmg', (e) => {
 
         tabs.toggleClass('selected-3s45Ha').toggleClass('itemSelected-1qLhcL').toggleClass('notSelected-1N1G5p').toggleClass('itemDefault-3Jdr52');
 		
